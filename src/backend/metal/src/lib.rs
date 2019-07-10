@@ -253,7 +253,7 @@ impl Instance {
     }
 
     #[cfg(feature = "winit")]
-    pub fn create_surface(&self, window: &winit::Window) -> Surface {
+    pub fn create_surface(&self, window: &winit::window::Window) -> Surface {
         #[cfg(target_os = "ios")]
         {
             use winit::os::ios::WindowExt;
@@ -261,8 +261,8 @@ impl Instance {
         }
         #[cfg(target_os = "macos")]
         {
-            use winit::os::macos::WindowExt;
-            self.create_surface_from_nsview(window.get_nsview(), false)
+            use winit::platform::macos::WindowExtMacOS;
+            self.create_surface_from_nsview(window.ns_view(), false)
         }
     }
 
