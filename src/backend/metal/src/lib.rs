@@ -296,7 +296,15 @@ impl hal::Instance<Backend> for Instance {
             }
             #[cfg(target_os = "macos")]
             raw_window_handle::RawWindowHandle::MacOS(handle) => {
-                Ok(self.create_surface_from_nsview(handle.ns_view, false))
+                let ns_view =
+                    if handle.ns_view.is_null() {
+                        let ns_window = handle.ns_window as *mut Object;
+                        unsafe { msg_send![ns_window, contentView] }
+                    } else {
+                        handle.ns_view
+                    };
+
+                Ok(self.create_surface_from_nsview(ns_view, false))
             }
             _ => Err(hal::window::InitError::UnsupportedWindowHandle),
         }
